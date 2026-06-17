@@ -25,10 +25,16 @@
   .error {
     background-color: red;
   }
+
+  .comment-text {
+    white-space: pre-line;
+  }
 </style>
 
 <script>
   "use strict";
+  const userName = prompt("Добро пожаловать! Как вас зовут?");
+  const safeUserName = userName !== null ? userName.replaceAll("<", "&lt;").replaceAll(">", "&gt;") : null;
 
   const comments = [
     {
@@ -56,7 +62,7 @@
   function renderComments() {
     listElement.innerHTML = comments.map((comment, index) => {
       return `
-        <li class="comment">
+        <li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -75,6 +81,7 @@
     }).join("");
 
     initLikeButtonsListeners();
+    initCommentListeners();
   }
 
   // Функция для оживления лайков
@@ -82,7 +89,9 @@
     const likeButtons = document.querySelectorAll(".like-button");
 
     for (const likeButton of likeButtons) {
-      likeButton.addEventListener("click", () => {
+      likeButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+
         // Достаем индекс комментария, на который кликнули
         const index = likeButton.dataset.index;
         const comment = comments[index];
@@ -101,6 +110,26 @@
       });
     }
   };
+
+  const initCommentListeners = () => {
+    const commentElements = document.querySelectorAll(".comment");
+
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener("click", () => {
+        const index = commentElement.dataset.index;
+        const currentComment = comments[index];
+        const quoteText = `> ${currentComment.name}:\n${currentComment.text}\n\n`;
+
+        // Записываем  цитату прямо в поле комментария
+        textInputElement.value = quoteText;
+
+        //  курсор в поле ввода, чтобы  можно было сразу писать ответ в нужном месте
+        textInputElement.focus();
+      });
+    }
+  };
+
+  initCommentListeners();
 
   // Создание нового сообщения
   {
@@ -145,27 +174,45 @@
       // </li>`;
       //   listElement.innerHTML = oldListHtml + newCommentHtml;
 
-      // меняем написанный в первой домашке код ☝️ на массив 👇
+      // меняем написанный в первой домашке код ☝️ на массив comments.push👇
+
+      const safeName = nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+
+      const safeText = textInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
 
       comments.push({
-        name: nameInputElement.value,
+        name: safeName,
         date: fullDate,
-        text: textInputElement.value,
+        text: safeText,
         likes: 0,
         isLiked: false
       });
 
+      nameInputElement.value = safeUserName;
+      textInputElement.value = "";
+
+
       // обязательно вызываем иначе не отрисует
       renderComments();
-
-      nameInputElement.value = "";
-      textInputElement.value = "";
     });
 
   }
 
   renderComments();
   console.log("It works!");
+
+
+  if (userName !== null && userName.trim() !== "") {
+    nameInputElement.value = userName;
+    alert(`Приятно познакомиться, ${userName}! Можете оставлять комментарии`);
+  } else {
+    alert("Вы не представились, но всё равно можете читать комментарии!");
+  };
+
 </script>
 
 </html>
