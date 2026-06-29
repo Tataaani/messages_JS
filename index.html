@@ -1,172 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+    <head>
+        <title>Проект "Комменты"</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
+    <body>
+        <div class="container">
+            <ul class="comments" id="comments-list"></ul>
 
-<body>
-  <div class="container">
-    <ul class="comments" id="comments-list"></ul>
-
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button">Написать</button>
-      </div>
-    </div>
-  </div>
-</body>
-
-<style>
-  .error {
-    background-color: red;
-  }
-</style>
-
-<script>
-  "use strict";
-
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: false
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLiked: true
-    }
-  ];
-
-  const listElement = document.getElementById("comments-list");
-  const nameInputElement = document.querySelector(".add-form-name");
-  const textInputElement = document.querySelector(".add-form-text");
-  const buttonElement = document.querySelector(".add-form-button");
-
-  // Функция рендеринга 
-  function renderComments() {
-    listElement.innerHTML = comments.map((comment, index) => {
-      return `
-        <li class="comment">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">${comment.text}</div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}" class="like-button ${comment.isLiked ? "-active-like" : ""}"></button>
+            <div class="add-form">
+                <input
+                    type="text"
+                    class="add-form-name"
+                    placeholder="Введите ваше имя"
+                />
+                <textarea
+                    type="textarea"
+                    class="add-form-text"
+                    placeholder="Введите ваш коментарий"
+                    rows="4"
+                ></textarea>
+                <div class="add-form-row">
+                    <button class="add-form-button">Написать</button>
+                </div>
             </div>
-          </div>
-        </li>
-      `;
-    }).join("");
+        </div>
+    </body>
 
-    initLikeButtonsListeners();
-  }
-
-  // Функция для оживления лайков
-  const initLikeButtonsListeners = () => {
-    const likeButtons = document.querySelectorAll(".like-button");
-
-    for (const likeButton of likeButtons) {
-      likeButton.addEventListener("click", () => {
-        // Достаем индекс комментария, на который кликнули
-        const index = likeButton.dataset.index;
-        const comment = comments[index];
-
-        // Реализуем сценарии лайка / убирания лайка в массиве
-        if (comment.isLiked) {
-          comment.isLiked = false;
-          comment.likes--;
-        } else {
-          comment.isLiked = true;
-          comment.likes++;
+    <style>
+        .error {
+            background-color: red;
         }
 
-        // Перерисовываем интерфейс на основе изменившегося массива
-        renderComments();
-      });
-    }
-  };
+        .comment-text {
+            white-space: pre-line;
+        }
+    </style>
 
-  // Создание нового сообщения
-  {
-    nameInputElement.addEventListener("click", () => {
-      nameInputElement.classList.remove("error");
-    });
-
-    textInputElement.addEventListener("click", () => {
-      textInputElement.classList.remove("error");
-    });
-
-    buttonElement.addEventListener("click", () => {
-      if (nameInputElement.value === "" || textInputElement.value === "") {
-        if (nameInputElement.value === "") nameInputElement.classList.add("error");
-        if (textInputElement.value === "") textInputElement.classList.add("error");
-        return;
-      }
-
-      const date = new Date();
-      const d = ("0" + date.getDate()).slice(-2);
-      const m = ("0" + (date.getMonth() + 1)).slice(-2);
-      const y = date.getFullYear().toString().slice(-2);
-      const time = date.getHours() + ":" + ("0" + date.getMinutes()).slice(-2);
-      const fullDate = `${d}.${m}.${y} ${time}`;
-
-      //   const oldListHtml = listElement.innerHTML;
-      //   const newCommentHtml = `
-      // <li class="comment">
-      //   <div class="comment-header">
-      //     <div>${nameInputElement.value}</div>
-      //     <div>${fullDate}</div>
-      //   </div>
-      //   <div class="comment-body">
-      //     <div class="comment-text">${textInputElement.value}</div>
-      //   </div>
-      //   <div class="comment-footer">
-      //     <div class="likes">
-      //       <span class="likes-counter">0</span>
-      //       <button class="like-button"></button>
-      //     </div>
-      //   </div>
-      // </li>`;
-      //   listElement.innerHTML = oldListHtml + newCommentHtml;
-
-      // меняем написанный в первой домашке код ☝️ на массив 👇
-
-      comments.push({
-        name: nameInputElement.value,
-        date: fullDate,
-        text: textInputElement.value,
-        likes: 0,
-        isLiked: false
-      });
-
-      // обязательно вызываем иначе не отрисует
-      renderComments();
-
-      nameInputElement.value = "";
-      textInputElement.value = "";
-    });
-
-  }
-
-  renderComments();
-  console.log("It works!");
-
-</script>
-
+    <script type="module" src="./index.js"></script>
 </html>
