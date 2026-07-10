@@ -2,18 +2,19 @@ import {
     initLikeButtonsListeners,
     initCommentListeners,
 } from './initListeners.js'
-import { comments } from './comments.js'
+import { getComments } from './comments.js'
+import { formatDate } from './formatDate.js'
 
 const listElement = document.getElementById('comments-list')
 
 export function renderComments() {
-    listElement.innerHTML = comments
+    listElement.innerHTML = getComments()
         .map((comment, index) => {
             return `
         <li class="comment" data-index="${index}">
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
+            <div>${comment.author.name}</div>
+            <div>${formatDate(comment.date)}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">${comment.text}</div>

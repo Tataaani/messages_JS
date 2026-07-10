@@ -1,5 +1,5 @@
-export function formatDate() {
-    const date = new Date()
+export function formatDate(dateString) {
+    const date = new Date(dateString)
     const d = ('0' + date.getDate()).slice(-2)
     const m = ('0' + (date.getMonth() + 1)).slice(-2)
     const y = date.getFullYear().toString().slice(-2)

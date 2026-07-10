@@ -1,10 +1,11 @@
 // Создание нового сообщения
 
-import { formatDate } from './formatDate.js'
-import { comments } from './comments.js'
+// import { formatDate } from './formatDate.js'
+// import { comments } from './comments.js'
 import { sanitizeHtml } from './replaceAll.js'
-import { safeUserName } from '../index.js'
+// import { safeUserName } from '../index.js'
 import { renderComments } from './render.js'
+import { updateComments } from './comments.js'
 
 export const nameInputElement = document.querySelector('.add-form-name')
 export const textInputElement = document.querySelector('.add-form-text')
@@ -27,21 +28,35 @@ buttonElement.addEventListener('click', () => {
         return
     }
 
-    const fullDate = formatDate()
+    // const fullDate = formatDate()
     const safeName = sanitizeHtml(nameInputElement.value)
     const safeText = sanitizeHtml(textInputElement.value)
 
-    comments.push({
-        name: safeName,
-        date: fullDate,
-        text: safeText,
-        likes: 0,
-        isLiked: false,
+    // comments.push({
+    //     name: safeName,
+    //     date: fullDate,
+    //     text: safeText,
+    //     likes: 0,
+    //     isLiked: false,
+    // })
+
+    fetch('https://wedev-api.sky.pro/api/v1/tataaani-v2/comments', {
+        method: 'POST',
+        body: JSON.stringify({
+            name: safeName,
+            text: safeText,
+        }),
     })
+        .then((response) => response.json())
+        .then(() =>
+            fetch('https://wedev-api.sky.pro/api/v1/tataaani-v2/comments'),
+        )
+        .then((response) => response.json())
+        .then((data) => {
+            updateComments(data.comments)
+            renderComments()
 
-    nameInputElement.value = safeUserName
-    textInputElement.value = ''
-
-    // обязательно вызываем иначе не отрисует
-    renderComments()
+            nameInputElement.value = ''
+            textInputElement.value = ''
+        })
 })
