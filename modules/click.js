@@ -1,11 +1,7 @@
 // Создание нового сообщения
 
-// import { formatDate } from './formatDate.js'
-// import { comments } from './comments.js'
 import { sanitizeHtml } from './replaceAll.js'
-// import { safeUserName } from '../index.js'
-import { renderComments } from './render.js'
-import { updateComments } from './comments.js'
+import { fetchAndRenderComments } from './fetchAndRenderComments.js'
 
 export const nameInputElement = document.querySelector('.add-form-name')
 export const textInputElement = document.querySelector('.add-form-text')
@@ -40,7 +36,15 @@ buttonElement.addEventListener('click', () => {
     //     isLiked: false,
     // })
 
-    fetch('https://wedev-api.sky.pro/api/v1/tataaani-v2/comments', {
+    const addFormElement = document.querySelector('.add-form')
+    addFormElement.style.display = 'none'
+    const loaderText = document.createElement('div')
+    loaderText.textContent = 'Комментарий добавляется...'
+    loaderText.style.textAlign = 'center'
+    loaderText.style.marginTop = '40px'
+    addFormElement.parentElement.appendChild(loaderText)
+
+    fetch('https://wedev-api.sky.pro/api/v1/tataaani-v3/comments', {
         method: 'POST',
         body: JSON.stringify({
             name: safeName,
@@ -48,14 +52,12 @@ buttonElement.addEventListener('click', () => {
         }),
     })
         .then((response) => response.json())
-        .then(() =>
-            fetch('https://wedev-api.sky.pro/api/v1/tataaani-v2/comments'),
-        )
-        .then((response) => response.json())
-        .then((data) => {
-            updateComments(data.comments)
-            renderComments()
-
+        .then(() => {
+            return fetchAndRenderComments()
+        })
+        .then(() => {
+            loaderText.remove()
+            addFormElement.style.display = 'flex'
             nameInputElement.value = ''
             textInputElement.value = ''
         })
