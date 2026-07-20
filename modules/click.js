@@ -32,6 +32,13 @@ buttonElement.addEventListener('click', () => {
         return
     }
 
+    if (navigator.onLine === false) {
+        alert(
+            'Нет подключения к интернету. Пожалуйста, проверьте соединение и попробуйте снова.',
+        )
+        return
+    }
+
     const safeName = sanitizeHtml(nameInputElement.value)
     const safeText = sanitizeHtml(textInputElement.value)
     const addFormElement = document.querySelector('.add-form')
@@ -43,7 +50,7 @@ buttonElement.addEventListener('click', () => {
     loaderText.style.marginTop = '40px'
     addFormElement.parentElement.appendChild(loaderText)
 
-    fetch('https://wedev-api.sky.pro/api/v1/tataaani-v3/comments', {
+    fetch('https://wedev-api.sky.pro/api/v1/tataaani-v4/comments', {
         method: 'POST',
         body: JSON.stringify({
             name: safeName,

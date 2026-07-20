@@ -4,7 +4,7 @@ import { renderComments } from './render.js'
 export const listElement = document.getElementById('comments-list')
 
 export const fetchAndRenderComments = () => {
-    return fetch('https://wedev-api.sky.pro/api/v1/tataaani-v3/comments', {
+    return fetch('https://wedev-api.sky.pro/api/v1/tataaani-v4/comments', {
         method: 'GET',
     })
         .then((response) => {
